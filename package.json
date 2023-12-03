@@ -1,0 +1,30 @@
+{
+  "name": "advent_of_code2023",
+  "version": "1.0.0",
+  "description": "Advent of Code 2023",
+  "main": "src/index.ts",
+  "repository": "https://github.com/andr0id1/adventOfCode2023.git",
+  "author": "Andre Clausen <andreclausen1@web.de>",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./bin/index.js",
+    "dev": "ts-node ./src/index.ts",
+    "test": "node --test --require ts-node/register src/2/__tests__/solution.test.ts"
+  },
+  "dependencies": {
+    "@types/node": "^20.10.2",
+    "typescript": "*"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^6.4.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-config-standard-with-typescript": "^40.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "3.1.0",
+    "ts-node": "^10.9.1"
+  }
+}
