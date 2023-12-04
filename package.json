@@ -10,7 +10,7 @@
     "build": "tsc",
     "start": "node ./bin/index.js",
     "dev": "ts-node ./src/index.ts",
-    "test": "node --test --require ts-node/register src/2/__tests__/solution.test.ts"
+    "test": "node --test --require ts-node/register src/3_2/__tests__/solution.test.ts"
   },
   "dependencies": {
     "@types/node": "^20.10.2",

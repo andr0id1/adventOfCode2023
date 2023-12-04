@@ -1,16 +1,13 @@
 import fs from "fs";
 
-const symbols = ["+", "-", "*", "/", "(", ")", "@", "&", "%", "$", "#", "!", "?", ":", ";", "=", "§"];
-
+const symbol = "*";
 
 const isNumber = (char: string) => !isNaN(parseInt(char))
-
-const isSymbol = (char: string) => symbols.includes(char);
 
 export const getSymbolIndices = (line: string) => {
     const symbolIndices: number[] = [];
     for (let i = 0; i < line.length; i++) {
-        if (isSymbol(line[i])) {
+        if (line[i] === symbol) {
             symbolIndices.push(i);
         }
     }
@@ -39,9 +36,7 @@ export const getNumberFromLine = (line: string, indicesToCheck: number[]) => {
     if (isInSelectRange) {
         numbersInRange.push(parseInt(cache));
     }
-
     return numbersInRange;
-
 }
 
 
@@ -61,14 +56,6 @@ const getIndicesSearchRanges = (maxLength: number, symbolIndices?: number[]) => 
     return indexToCheck;
 }
 
-export const getIndicesToCheck = (maxLength: number, symbolIndicesTopLine?: number[], symbolIndicesCurrentLine?: number[], symbolIndicesBottomLine?: number[]) => {
-    const topLineIndices = getIndicesSearchRanges(maxLength, symbolIndicesTopLine);
-    const currentLineIndices = getIndicesSearchRanges(maxLength, symbolIndicesCurrentLine);
-    const bottomLineIndices = getIndicesSearchRanges(maxLength, symbolIndicesBottomLine);
-    return [...(new Set<number>([...topLineIndices, ...currentLineIndices, ...bottomLineIndices]))];
-}
-
-
 const getFile = (filePath: string) => {
     try {
         return fs.readFileSync(filePath, "utf8");
@@ -78,19 +65,6 @@ const getFile = (filePath: string) => {
     }
 };
 
-
-export const getLineSymbolIndices = (lines: string[], currentIndex: number) => {
-    const previousLineSymbolIndices = currentIndex === 0 ? undefined : getSymbolIndices(lines[currentIndex - 1]);
-    const currentLineSymbolIndices = getSymbolIndices(lines[currentIndex]);
-    const nextLineSymbolIndices = currentIndex === lines.length - 1 ? undefined : getSymbolIndices(lines[currentIndex + 1]);
-
-    return {
-        previousLineSymbolIndices,
-        currentLineSymbolIndices,
-        nextLineSymbolIndices
-    }
-}
-
 const addUpNumberArray = (numbers: number[]) => {
     if (numbers.length === 0) {
         return 0;
@@ -98,19 +72,32 @@ const addUpNumberArray = (numbers: number[]) => {
     return numbers.reduce((a, b) => a + b);
 };
 
+const multiplyUpNumberArray = (numbers: number[]) => {
+    if (numbers.length === 0) {
+        return 0;
+    }
+    return numbers.reduce((a, b) => a * b);
+};
 
-const handleLine = (line: string, lineNumber: number, lines: string[]): number[] => {
+const getNumberForIndex = (line: string, indexToCheck: number) => {
+    const indexRange = [...getIndicesSearchRanges(line.length, [indexToCheck])];
+    return getNumberFromLine(line, indexRange);
+}
 
-    const {
-        previousLineSymbolIndices,
-        currentLineSymbolIndices,
-        nextLineSymbolIndices
-    } = getLineSymbolIndices(lines, lineNumber);
+const getSurroundingNumbers = (index: number, lineIndex: number, lines: string[]) => {
+    const numbersPreviousLine = lineIndex > 0 ? getNumberForIndex(lines[lineIndex - 1], index) : undefined
+    const numbersCurrentLine = getNumberForIndex(lines[lineIndex], index);
+    const numbersNextLine = lineIndex < lines.length - 1 ? getNumberForIndex(lines[lineIndex + 1], index) : undefined
+    const numbers = [...(numbersPreviousLine || []), ...numbersCurrentLine, ...(numbersNextLine || [])]
+    return numbers.length > 1 ? numbers : [];
+}
+const handleLine = (line: string, lineIndex: number, lines: string[]): number[] => {
+    const indicesToCheck = getSymbolIndices(line);
 
-    const linesToCheck = getIndicesToCheck(line.length, previousLineSymbolIndices, currentLineSymbolIndices, nextLineSymbolIndices);
-
-
-    return getNumberFromLine(line, linesToCheck);
+    return indicesToCheck.map((index) => {
+        const numbersToCalc = getSurroundingNumbers(index, lineIndex, lines)
+        return multiplyUpNumberArray(numbersToCalc);
+    });
 
 }
 
@@ -121,6 +108,5 @@ export const solve = (filePath: string): number => {
         const lineNumbers = lines.map((line, index) => handleLine(line, index, lines));
         return addUpNumberArray(lineNumbers.map((lineNumbers) => addUpNumberArray(lineNumbers)));
     }
-
     return -1;
 };
