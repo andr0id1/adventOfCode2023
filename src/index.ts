@@ -4,6 +4,7 @@ import { solve as solve2 } from "./2/solution";
 import { solve as solve2_2 } from "./2_2/solution";
 import { solve as solve3 } from "./3/solution";
 import { solve as solve3_2 } from "./3_2/solution";
+import { solve as solve4 } from "./4/solution";
 
 const solution = solve1("src/1/codes.txt");
 console.log("solution: ",solution);
@@ -22,3 +23,6 @@ console.log("solution3: ",solution3);
 
 const solution3_2 = solve3_2("src/3_2/codes.txt");
 console.log("solution3_2: ",solution3_2);
+
+const solution4 = solve4("src/4/codes.txt");
+console.log("solution4: ",solution4);
